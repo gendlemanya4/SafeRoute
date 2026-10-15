@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import { scoreRoute, haversine, densify } from './scoring.js';
+const now = new Date('2026-10-15T10:00:00Z');
+const rep = (lng, lat, severity = 3) => ({ location: { coordinates: [lng, lat] }, severity, createdAt: now });
+const near = [[72.84, 19.05], [72.85, 19.05]], far = [[72.84, 19.09], [72.85, 19.09]];
+const reports = [rep(72.845, 19.0501), rep(72.8452, 19.0499)];
+const a = scoreRoute(near, reports, now), b = scoreRoute(far, reports, now);
+assert.ok(a.avgRisk > b.avgRisk && a.maxRisk > 0, 'route through reports scores higher');
+assert.equal(b.avgRisk, 0); assert.equal(b.nearby, 0); assert.equal(a.nearby, 2);
+assert.equal(scoreRoute(near, [], now).avgRisk, 0);
+assert.ok(Math.abs(haversine([72.84, 19.05], [72.85, 19.05]) - 1050) < 40, 'about 1.05 km per 0.01 degree lng at this latitude');
+assert.ok(densify(near).length > 20);
+console.log('scoring tests passed');
