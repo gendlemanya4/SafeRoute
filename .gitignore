@@ -37,3 +37,6 @@ desktop.ini
 # Temporary files
 *.tmp
 *.swp
+.env
+.env.*
+!.env.example
